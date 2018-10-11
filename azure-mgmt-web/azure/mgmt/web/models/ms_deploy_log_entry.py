@@ -39,7 +39,8 @@ class MSDeployLogEntry(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(MSDeployLogEntry, self).__init__(**kwargs)
         self.time = None
         self.type = None
         self.message = None

@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.servers_operations import ServersOperations
+from .operations.replicas_operations import ReplicasOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.databases_operations import DatabasesOperations
 from .operations.configurations_operations import ConfigurationsOperations
 from .operations.log_files_operations import LogFilesOperations
-from .operations.performance_tiers_operations import PerformanceTiersOperations
 from .operations.location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
 from .operations.check_name_availability_operations import CheckNameAvailabilityOperations
+from .operations.server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from .operations.operations import Operations
 from . import models
 
@@ -52,21 +53,23 @@ class MySQLManagementClientConfiguration(AzureConfiguration):
 
         super(MySQLManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('mysqlmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-rdbms/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class MySQLManagementClient(object):
-    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure MySQL resources including servers, databases, firewall rules, VNET rules, log files and configurations.
+class MySQLManagementClient(SDKClient):
+    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure MySQL resources including servers, databases, firewall rules, VNET rules, log files and configurations with new business model.
 
     :ivar config: Configuration for client.
     :vartype config: MySQLManagementClientConfiguration
 
     :ivar servers: Servers operations
     :vartype servers: azure.mgmt.rdbms.mysql.operations.ServersOperations
+    :ivar replicas: Replicas operations
+    :vartype replicas: azure.mgmt.rdbms.mysql.operations.ReplicasOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: azure.mgmt.rdbms.mysql.operations.FirewallRulesOperations
     :ivar virtual_network_rules: VirtualNetworkRules operations
@@ -77,12 +80,12 @@ class MySQLManagementClient(object):
     :vartype configurations: azure.mgmt.rdbms.mysql.operations.ConfigurationsOperations
     :ivar log_files: LogFiles operations
     :vartype log_files: azure.mgmt.rdbms.mysql.operations.LogFilesOperations
-    :ivar performance_tiers: PerformanceTiers operations
-    :vartype performance_tiers: azure.mgmt.rdbms.mysql.operations.PerformanceTiersOperations
     :ivar location_based_performance_tier: LocationBasedPerformanceTier operations
     :vartype location_based_performance_tier: azure.mgmt.rdbms.mysql.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailability operations
     :vartype check_name_availability: azure.mgmt.rdbms.mysql.operations.CheckNameAvailabilityOperations
+    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
+    :vartype server_security_alert_policies: azure.mgmt.rdbms.mysql.operations.ServerSecurityAlertPoliciesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.mysql.operations.Operations
 
@@ -99,14 +102,16 @@ class MySQLManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = MySQLManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(MySQLManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-04-30-preview'
+        self.api_version = '2017-12-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.servers = ServersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.replicas = ReplicasOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -118,11 +123,11 @@ class MySQLManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.log_files = LogFilesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.performance_tiers = PerformanceTiersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.location_based_performance_tier = LocationBasedPerformanceTierOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.check_name_availability = CheckNameAvailabilityOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -24,5 +24,6 @@ class EnabledConfig(Model):
         'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
-    def __init__(self, enabled=None):
-        self.enabled = enabled
+    def __init__(self, **kwargs):
+        super(EnabledConfig, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)

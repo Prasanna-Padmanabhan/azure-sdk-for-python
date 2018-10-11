@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -19,9 +19,9 @@ from .operations.virtual_network_rules_operations import VirtualNetworkRulesOper
 from .operations.databases_operations import DatabasesOperations
 from .operations.configurations_operations import ConfigurationsOperations
 from .operations.log_files_operations import LogFilesOperations
-from .operations.performance_tiers_operations import PerformanceTiersOperations
 from .operations.location_based_performance_tier_operations import LocationBasedPerformanceTierOperations
 from .operations.check_name_availability_operations import CheckNameAvailabilityOperations
+from .operations.server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
 from .operations.operations import Operations
 from . import models
 
@@ -52,15 +52,15 @@ class PostgreSQLManagementClientConfiguration(AzureConfiguration):
 
         super(PostgreSQLManagementClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('postgresqlmanagementclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-rdbms/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class PostgreSQLManagementClient(object):
-    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure PostgreSQL resources including servers, databases, firewall rules, VNET rules, log files and configurations.
+class PostgreSQLManagementClient(SDKClient):
+    """The Microsoft Azure management API provides create, read, update, and delete functionality for Azure PostgreSQL resources including servers, databases, firewall rules, VNET rules, security alert policies, log files and configurations with new business model.
 
     :ivar config: Configuration for client.
     :vartype config: PostgreSQLManagementClientConfiguration
@@ -77,12 +77,12 @@ class PostgreSQLManagementClient(object):
     :vartype configurations: azure.mgmt.rdbms.postgresql.operations.ConfigurationsOperations
     :ivar log_files: LogFiles operations
     :vartype log_files: azure.mgmt.rdbms.postgresql.operations.LogFilesOperations
-    :ivar performance_tiers: PerformanceTiers operations
-    :vartype performance_tiers: azure.mgmt.rdbms.postgresql.operations.PerformanceTiersOperations
     :ivar location_based_performance_tier: LocationBasedPerformanceTier operations
     :vartype location_based_performance_tier: azure.mgmt.rdbms.postgresql.operations.LocationBasedPerformanceTierOperations
     :ivar check_name_availability: CheckNameAvailability operations
     :vartype check_name_availability: azure.mgmt.rdbms.postgresql.operations.CheckNameAvailabilityOperations
+    :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
+    :vartype server_security_alert_policies: azure.mgmt.rdbms.postgresql.operations.ServerSecurityAlertPoliciesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.postgresql.operations.Operations
 
@@ -99,10 +99,10 @@ class PostgreSQLManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = PostgreSQLManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(PostgreSQLManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-04-30-preview'
+        self.api_version = '2017-12-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -118,11 +118,11 @@ class PostgreSQLManagementClient(object):
             self._client, self.config, self._serialize, self._deserialize)
         self.log_files = LogFilesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.performance_tiers = PerformanceTiersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.location_based_performance_tier = LocationBasedPerformanceTierOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.check_name_availability = CheckNameAvailabilityOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

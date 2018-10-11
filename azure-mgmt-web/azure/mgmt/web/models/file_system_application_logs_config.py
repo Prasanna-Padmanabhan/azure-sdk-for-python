@@ -24,5 +24,6 @@ class FileSystemApplicationLogsConfig(Model):
         'level': {'key': 'level', 'type': 'LogLevel'},
     }
 
-    def __init__(self, level="Off"):
-        self.level = level
+    def __init__(self, **kwargs):
+        super(FileSystemApplicationLogsConfig, self).__init__(**kwargs)
+        self.level = kwargs.get('level', "Off")

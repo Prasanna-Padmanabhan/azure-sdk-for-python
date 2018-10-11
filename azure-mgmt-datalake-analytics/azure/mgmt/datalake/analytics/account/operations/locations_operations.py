@@ -22,7 +22,7 @@ class LocationsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2016-11-01".
     """
 
@@ -40,9 +40,9 @@ class LocationsOperations(object):
     def get_capability(
             self, location, custom_headers=None, raw=False, **operation_config):
         """Gets subscription-level properties and limits for Data Lake Analytics
-        specified by Resource location.
+        specified by resource location.
 
-        :param location: The Resource location without whitespace.
+        :param location: The resource location without whitespace.
         :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -56,10 +56,10 @@ class LocationsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/providers/Microsoft.DataLakeAnalytics/locations/{location}/capability'
+        url = self.get_capability.metadata['url']
         path_format_arguments = {
-            'location': self._serialize.url("location", location, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'location': self._serialize.url("location", location, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -96,3 +96,4 @@ class LocationsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_capability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DataLakeAnalytics/locations/{location}/capability'}

@@ -9,15 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.accounts_operations import AccountsOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
+from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.trusted_id_providers_operations import TrustedIdProvidersOperations
-from .operations.account_operations import AccountOperations
-from .operations.locations_operations import LocationsOperations
 from .operations.operations import Operations
+from .operations.locations_operations import LocationsOperations
 from . import models
 
 
@@ -55,22 +56,24 @@ class DataLakeStoreAccountManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class DataLakeStoreAccountManagementClient(object):
+class DataLakeStoreAccountManagementClient(SDKClient):
     """Creates an Azure Data Lake Store account management client.
 
     :ivar config: Configuration for client.
     :vartype config: DataLakeStoreAccountManagementClientConfiguration
 
+    :ivar accounts: Accounts operations
+    :vartype accounts: azure.mgmt.datalake.store.operations.AccountsOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: azure.mgmt.datalake.store.operations.FirewallRulesOperations
+    :ivar virtual_network_rules: VirtualNetworkRules operations
+    :vartype virtual_network_rules: azure.mgmt.datalake.store.operations.VirtualNetworkRulesOperations
     :ivar trusted_id_providers: TrustedIdProviders operations
     :vartype trusted_id_providers: azure.mgmt.datalake.store.operations.TrustedIdProvidersOperations
-    :ivar account: Account operations
-    :vartype account: azure.mgmt.datalake.store.operations.AccountOperations
-    :ivar locations: Locations operations
-    :vartype locations: azure.mgmt.datalake.store.operations.LocationsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.datalake.store.operations.Operations
+    :ivar locations: Locations operations
+    :vartype locations: azure.mgmt.datalake.store.operations.LocationsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -86,20 +89,22 @@ class DataLakeStoreAccountManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = DataLakeStoreAccountManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(DataLakeStoreAccountManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2016-11-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.accounts = AccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_network_rules = VirtualNetworkRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.trusted_id_providers = TrustedIdProvidersOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.account = AccountOperations(
+        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.locations = LocationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

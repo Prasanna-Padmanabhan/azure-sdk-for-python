@@ -2,6 +2,94 @@
 
 Release History
 ===============
+
+0.6.0 (2018-06-15)
+++++++++++++++++++
+
+**Features**
+
+- Catalog_ListTableFragments
+- Catalog_PreviewTable
+- Catalog_PreviewTablePartition
+    
+**General breaking changes**
+
+The general breaking changes described in 0.5.0 for account now applies to job and catalog as well.
+
+0.5.0 (2018-06-14)
+++++++++++++++++++
+
+**Features**
+
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
+**General Breaking changes (account only)**
+
+This version uses a next-generation code generator that *might* introduce breaking changes.
+
+- Model signatures now use only keyword-argument syntax. All positional arguments must be re-written as keyword-arguments.
+  To keep auto-completion in most cases, models are now generated for Python 2 and Python 3. Python 3 uses the "*" syntax for keyword-only arguments.
+- Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
+  While this is not a breaking change, the distinctions are important, and are documented here:
+  https://docs.python.org/3/library/enum.html#others
+  At a glance:
+
+  - "is" should not be used at all.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+
+- New Long Running Operation:
+
+  - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
+  - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
+    without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
+  - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
+    the response of the initial call will be returned without polling.
+  - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
+  - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
+
+**Bugfixes**
+
+- Compatibility of the sdist with wheel 0.31.0
+
+0.4.0 (2018-02-12)
+++++++++++++++++++
+
+**Breaking changes**
+
+- The account operations object has been changed from "account" to "accounts"
+    - E.g., account.get(...) to accounts.get(...)
+- When creating or updating resources (accounts, compute policies, etc.), explicit parameter objects are now required:
+    - Account creation:
+        - "DataLakeAnalyticsAccount" to "CreateDataLakeAnalyticsAccountParameters"
+            - List of "DataLakeStoreInfo" to "AddDataLakeStoreWithAccountParameters"
+            - List of "StorageAccountInfo" to "AddStorageAccountWithAccountParameters"
+            - List of "FirewallRule" to "CreateFirewallRuleWithAccountParameters"
+            - List of "ComputePolicy" to "CreateComputePolicyWithAccountParameters"
+    - Account update:
+        - "DataLakeAnalyticsUpdateParameters" to "UpdateDataLakeAnalyticsParameters"
+            - List of "DataLakeStoreInfo" to "UpdateDataLakeStoreWithAccountParameters"
+            - List of "StorageAccountInfo" to "UpdateStorageAccountWithAccountParameters"
+            - List of "FirewallRule" to "UpdateFirewallRuleWithAccountParameters"
+            - List of "ComputePolicy" to "UpdateComputePolicyWithAccountParameters"
+    - Data Lake Store account addition:
+        - "DataLakeStoreAccountInfo" to "AddDataLakeStoreParameters"
+    - Storage account addition and update:
+        - "StorageAccountInfo" to "AddStorageAccountParameters"
+        - "StorageAccountInfo" to "UpdateStorageAccountParameters"
+    - Compute policy creation and update:
+        - "ComputePolicy" to "CreateOrUpdateComputePolicyParameters"
+        - "ComputePolicy" to "UpdateComputePolicyParameters"
+    - Firewall rule creation and update:
+        - "FirewallRule" to "CreateOrUpdateFirewallRuleParameters"
+        - "FirewallRule" to "UpdateFirewallRuleParameters"
+- When retrieving resources, all the properties are now read-only and the following object names have been changed:
+    - Changed "DataLakeStoreAccountInfo" to "DataLakeStoreAccountInformation"
+    - Changed "StorageAccountInfo" to "StorageAccountInformation"
+- Added paging extension for the returned list for these APIs:
+    - Catalog_ListAclsByDatabase
+    - Catalog_ListAcls
+
 0.3.0 (2018-01-09)
 ++++++++++++++++++
 
@@ -45,9 +133,9 @@ Release History
   * When submitting jobs, change JobInformation objects to CreateJobParameters.
 
     * When setting the properties for the CreateJobParameters object, be sure to change the USqlJobProperties object to a CreateUSqlJobProperties object.
-    
+
   * When building jobs, change JobInformation objects to BuildJobParameters objects.
-  
+
     * When setting the properties for the BuildJobParameters object, be sure to change the USqlJobProperties object to a CreateUSqlJobProperties object.
     * NOTE: The following fields are not a part of the BuildJobParameters object:
 
@@ -87,7 +175,7 @@ Release History
 * When retrieving account information, an account id field called "accountId" is now included.
 
   * accountId's description: The unique identifier associated with this Data Lake Analytics account.
-    
+
 0.1.6 (2017-06-19)
 ++++++++++++++++++
 * Fixing a regression discovered in 0.1.5. Please update to 0.1.6 to avoid any issues caused by that regression.
@@ -108,7 +196,7 @@ Release History
 
   * Catalog item get and list support for Packages
   * Update to allow listing certain catalog items from within a database (no schema required to list):
-  
+
     * list_tables_by_database
     * list_table_valued_functions_by_database
     * list_views_by_database
